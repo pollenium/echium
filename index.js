@@ -84,6 +84,14 @@ async function run() {
   console.log('run')
   if (!transactionHash) {
     console.log('no transaction hash')
+
+    const now = new Date
+    const ellapsed = now - startedAt
+    if (ellapsed > 5000) {
+      console.log('exit')
+      process.exit()
+    }
+
     await delay(1000)
     run()
     return
