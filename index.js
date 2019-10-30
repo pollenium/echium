@@ -49,6 +49,7 @@ async function getTransaction(transactionHash) {
     to: transactionData.to,
     nonce: transactionData.nonce,
     data: transactionData.data,
+    value: transactionData.value,
     v: transactionData.v,
     r: transactionData.r,
     s: transactionData.s
