@@ -55,7 +55,7 @@ async function getTransaction(transactionHash) {
 }
 
 async function handleTransactionHash(transactionHash) {
-  console.log('transactionHash', transactionHash)
+  console.log('handleTransactionHash', transactionHash)
   const transaction = await getTransaction(transactionHash)
   if (!transaction) {
     console.log('no transaction')
@@ -81,7 +81,9 @@ async function handleTransactionHash(transactionHash) {
 const startedAt = new Date
 
 async function run() {
+  console.log('run')
   if (!transactionHash) {
+    console.log('no transaction hash')
     await delay(1000)
     run()
     return
