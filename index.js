@@ -96,6 +96,8 @@ async function run() {
     process.exit()
   }
 
+  await delay(1000)
+
   run()
 }
 
