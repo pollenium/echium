@@ -58,6 +58,7 @@ async function getTransaction(transactionHash) {
   })
 
   console.log((new pollenium.Bytes(transaction.hash())).getHex())
+  return transaction
 }
 
 async function handleTransactionHash(transactionHash) {
