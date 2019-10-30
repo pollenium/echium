@@ -1,3 +1,5 @@
+process.on('unhandledRejection', (error) => { throw error })
+
 const Web3 = require('web3');
 const Worker = require('tiny-worker')
 const WebSocket = require('isomorphic-ws')
