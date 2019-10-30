@@ -1,0 +1,28 @@
+{
+  "name": "pollenium-echium",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollenium/echium.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pollenium/echium/issues"
+  },
+  "homepage": "https://github.com/pollenium/echium#readme",
+  "dependencies": {
+    "delay": "^4.3.0",
+    "forever": "^1.0.0",
+    "isomorphic-ws": "^4.0.1",
+    "pollenium-anemone": "^3.0.0",
+    "tiny-worker": "^2.3.0",
+    "web3": "^1.2.2",
+    "wrtc": "^0.4.2"
+  }
+}
