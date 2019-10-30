@@ -88,7 +88,7 @@ async function run() {
   run()
 }
 
-delay(30000).then(() => {
+delay(60000).then(() => {
   process.exit()
 })
 
