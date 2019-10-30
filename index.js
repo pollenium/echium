@@ -43,12 +43,13 @@ async function getTransaction(transactionHash) {
   if (transactionData === null) {
     return null
   }
+  console.dir(transactionData)
   return new Transaction({
     gasLimit: transactionData.gas,
     gasPrice: transactionData.gasPrice,
     to: transactionData.to,
     nonce: transactionData.nonce,
-    data: transactionData.data,
+    data: transactionData.input,
     value: transactionData.value,
     v: transactionData.v,
     r: transactionData.r,
