@@ -48,6 +48,7 @@ async function getTransaction(transactionHash) {
     gasPrice: transactionData.gasPrice,
     to: transactionData.to,
     nonce: transactionData.nonce,
+    data: transactionData.data,
     v: transactionData.v,
     r: transactionData.r,
     s: transactionData.s
