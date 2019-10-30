@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/pollenium/echium#readme",
   "dependencies": {
+    "bn.js": "^5.0.0",
     "delay": "^4.3.0",
     "forever": "^1.0.0",
     "isomorphic-ws": "^4.0.1",

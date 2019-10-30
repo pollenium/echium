@@ -5,6 +5,7 @@ const wrtc = require('wrtc')
 const delay = require('delay')
 const Transaction = require('ethereumjs-tx').Transaction
 const pollenium = require('pollenium-anemone/node')
+const Bn = require('bn.js')
 
 const polleniumClient = new pollenium.Client({
   signalingServerUrls: [
@@ -44,17 +45,19 @@ async function getTransaction(transactionHash) {
     return null
   }
   console.dir(transactionData)
-  return new Transaction({
-    gasLimit: transactionData.gas,
-    gasPrice: transactionData.gasPrice,
+  const transaction = new Transaction({
+    gasLimit: new Bn(transactionData.gas),
+    gasPrice: new Bn(transactionData.gasPrice),
     to: transactionData.to,
-    nonce: transactionData.nonce,
+    nonce: new Bn(transactionData.nonce),
     data: transactionData.input,
-    value: transactionData.value,
+    value: new Bn(transactionData.value),
     v: transactionData.v,
     r: transactionData.r,
     s: transactionData.s
   })
+
+  console.log((new pollenium.Bytes(transaction.hash())).getHex())
 }
 
 async function handleTransactionHash(transactionHash) {
