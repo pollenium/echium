@@ -78,6 +78,8 @@ async function handleTransactionHash(transactionHash) {
   console.log('broadcast')
 }
 
+const startedAt = new Date
+
 async function run() {
   if (!transactionHash) {
     await delay(1000)
@@ -85,11 +87,16 @@ async function run() {
     return
   }
   await handleTransactionHash(transactionHash)
+
+  const now = new Date
+  const ellapsed = now - startedAt
+  console.log('ellapsed', ellapsed)
+  if (ellapsed > 60000) {
+    console.log('exit')
+    process.exit()
+  }
+
   run()
 }
-
-delay(60000).then(() => {
-  process.exit()
-})
 
 run()
