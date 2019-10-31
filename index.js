@@ -114,7 +114,6 @@ async function run() {
 
   const now = new Date
   const ellapsed = now - startedAt
-  const softCutoff = ()
   console.log('ellapsed', ellapsed)
   if (ellapsed > softCutoff) {
     console.log('softCutoff')
