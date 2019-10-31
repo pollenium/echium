@@ -82,9 +82,11 @@ async function handleTransactionHash(transactionHash) {
     pollenium.Bytes.fromBuffer(transactionSerialized),
     8
   )
+  console.log('fetchMissive')
   const missive = await missiveGenerator.fetchMissive()
-  missive.broadcast()
   console.log('broadcast')
+  missive.broadcast()
+  console.log('broadcasted')
 }
 
 const startedAt = new Date
