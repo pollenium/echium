@@ -91,6 +91,9 @@ async function handleTransactionHash(transactionHash) {
 
 const startedAt = new Date
 
+const softCutoff = (60 + (Math.random() * 15)) * 1000
+const hardCutoff = (90 + (Math.random() * 15)) * 1000
+
 async function run() {
   console.log('run')
   if (!transactionHash) {
@@ -111,9 +114,10 @@ async function run() {
 
   const now = new Date
   const ellapsed = now - startedAt
+  const softCutoff = ()
   console.log('ellapsed', ellapsed)
-  if (ellapsed > 60000) {
-    console.log('exit')
+  if (ellapsed > softCutoff) {
+    console.log('softCutoff')
     process.exit()
   }
 
@@ -124,6 +128,6 @@ async function run() {
 
 run()
 
-delay(120000).then(() => {
-  throw new Error('restart')
+delay(hardCutoff).then(() => {
+  throw new Error('hardCutoff')
 })
