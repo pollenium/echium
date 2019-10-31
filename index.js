@@ -123,3 +123,7 @@ async function run() {
 }
 
 run()
+
+delay(120000).then(() => {
+  throw new Error('restart')
+})
