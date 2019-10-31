@@ -80,7 +80,7 @@ async function handleTransactionHash(transactionHash) {
     polleniumClient,
     applicationId,
     pollenium.Bytes.fromBuffer(transactionSerialized),
-    8
+    4
   )
   console.log('fetchMissive')
   const missive = await missiveGenerator.fetchMissive()
