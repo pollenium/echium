@@ -136,8 +136,9 @@ async function run() {
     run()
     return
   }
-  console.log('transactionHashRequests.age', (new Date).getTime() - transactionHashRequests[0].requestedAt)
-  await handleTransactionHash(transactionHashRequests[0].transactionHash)
+  const transactionHashRequest = transactionHashRequests.shift()
+  console.log('transactionHashRequests.age', (new Date).getTime() - transactionHashRequest.requestedAt)
+  await handleTransactionHash(transactionHashRequest.transactionHash)
 
   const now = new Date
   const ellapsed = now - startedAt
