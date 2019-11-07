@@ -25,11 +25,38 @@ const applicationId = pollenium.Bytes.fromUtf8('eth.tx.0').getPaddedLeft(32)
 const provider = new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/4815963da6e14948bddcbea039e3383b')
 const infura = new Web3(provider)
 
-let transactionHash
+let transactionHashRequests = []
 
-infura.eth.subscribe('pendingTransactions', (error, _transactionHash) => {
-  transactionHash = _transactionHash
+infura.eth.subscribe('pendingTransactions', (error, transactionHash) => {
+  if (error) {
+    console.error(error)
+  }
+
+  if(transactionHashRequests.length > 1000) {
+    return
+  }
+
+  transactionHashRequests.push({
+    transactionHash,
+    requestedAt: (new Date).getTime()
+  })
 })
+
+function cullTransactionHashRequests() {
+  const cutoff = (new Date).getTime() - 60000
+  const cutoffIndex = transactionHashRequests.findIndex((transactionHashRequest) => {
+    return transactionHashRequest.requestedAt >= cutoff
+  })
+  transactionHashRequests = transactionHashRequests.slice(cutoffIndex)
+}
+
+async function loopCullTransactionHashRequests() {
+  cullTransactionHashRequests()
+  await delay(1000)
+  loopCullTransactionHashRequests()
+}
+
+loopCullTransactionHashRequests()
 
 async function getTransactionData(transactionHash) {
   if (!transactionHash) {
@@ -41,6 +68,7 @@ async function getTransactionData(transactionHash) {
 async function getTransaction(transactionHash) {
   const transactionData = await getTransactionData(transactionHash)
   if (transactionData === null) {
+    console.error('transactionData null')
     return null
   }
   console.dir(transactionData)
@@ -93,12 +121,13 @@ const hardCutoff = (90 + (Math.random() * 15)) * 1000
 
 async function run() {
   console.log('run')
-  if (!transactionHash) {
+  console.log('transactionHashRequests.length', transactionHashRequests.length)
+  if (transactionHashRequests.length === 0) {
     console.log('no transaction hash')
 
     const now = new Date
     const ellapsed = now - startedAt
-    if (ellapsed > 5000) {
+    if (ellapsed > 10000) {
       console.log('exit')
       process.exit()
     }
@@ -107,7 +136,8 @@ async function run() {
     run()
     return
   }
-  await handleTransactionHash(transactionHash)
+  console.log('transactionHashRequests.age', (new Date).getTime() - transactionHashRequests[0].requestedAt)
+  await handleTransactionHash(transactionHashRequests[0].transactionHash)
 
   const now = new Date
   const ellapsed = now - startedAt
