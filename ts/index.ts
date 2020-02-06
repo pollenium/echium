@@ -1,32 +1,33 @@
-process.on('unhandledRejection', (error) => { throw error })
+import Web3 from 'web3'
+import delay from 'delay'
+import { Transaction } from 'ethereumjs-tx'
+import { Uu } from 'pollenium-uvaursi'
+import { Client, MissiveGenerator } from 'pollenium-anemone'
+import path from 'path'
 
-const Web3 = require('web3');
-const Worker = require('tiny-worker')
-const WebSocket = require('isomorphic-ws')
-const wrtc = require('wrtc')
-const delay = require('delay')
-const Transaction = require('ethereumjs-tx').Transaction
-const pollenium = require('pollenium-anemone/node')
-const Bn = require('bn.js')
-
-const polleniumClient = new pollenium.Client({
+const client = new Client({
   signalingServerUrls: [
     `wss://begonia-us-1.herokuapp.com`,
     `wss://begonia-eu-1.herokuapp.com`,
   ],
-  Worker: Worker,
-  WebSocket: WebSocket,
-  wrtc: wrtc,
-  hashcashWorkerUrl: `${__dirname}/node_modules/pollenium-anemone/node/hashcash-worker.js`
+  missiveLatencyTolerance: 30,
+  sdpTimeout: 10,
+  connectionTimeout: 10,
+  bootstrapOffersTimeout: 5,
+  maxFriendshipsCount: 6,
+  maxOfferAttemptsCount: 2,
+  maxOfferLastReceivedAgo: 30,
+  offerReuploadInterval: 5
 })
 
-const applicationId = pollenium.Bytes.fromUtf8('eth.tx.0').getPaddedLeft(32)
+const applicationId = Uu.fromUtf8('eth.tx.0').genPaddedLeft(32)
 
 const provider = new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/4815963da6e14948bddcbea039e3383b')
 const infura = new Web3(provider)
 
 let transactionHashRequests = []
 
+// @ts-ignore
 infura.eth.subscribe('pendingTransactions', (error, transactionHash) => {
   if (error) {
     console.error(error)
@@ -73,18 +74,14 @@ async function getTransaction(transactionHash) {
   }
   console.dir(transactionData)
   const transaction = new Transaction({
-    gasLimit: new Bn(transactionData.gas),
-    gasPrice: new Bn(transactionData.gasPrice),
+    gasLimit: transactionData.gas,
+    gasPrice: transactionData.gasPrice,
     to: transactionData.to,
-    nonce: new Bn(transactionData.nonce),
+    nonce: transactionData.nonce,
     data: transactionData.input,
-    value: new Bn(transactionData.value),
-    v: transactionData.v,
-    r: transactionData.r,
-    s: transactionData.s
+    value: transactionData.value,
   })
 
-  console.log((new pollenium.Bytes(transaction.hash())).getHex())
   return transaction
 }
 
@@ -95,26 +92,22 @@ async function handleTransactionHash(transactionHash) {
     console.log('no transaction')
     return
   }
-  if (!transaction.verifySignature()) {
-    console.log('bad sig')
-    return
-  }
   const transactionSerialized = transaction.serialize()
   console.log('transactionSerialized', transactionSerialized)
-  const missiveGenerator = new pollenium.MissiveGenerator(
-    polleniumClient,
+  const missiveGenerator = new MissiveGenerator({
     applicationId,
-    pollenium.Bytes.fromBuffer(transactionSerialized),
-    0
-  )
-  console.log('fetchMissive')
+    applicationData: transactionSerialized,
+    difficulty: 0,
+    hashcashWorkerUrl: require.resolve('pollenium-anemone/node/src/hashcash-worker'),
+    ttl: 10
+  })
   const missive = await missiveGenerator.fetchMissive()
   console.log('broadcast')
-  missive.broadcast()
+  client.broadcastMissive(missive)
   console.log('broadcasted')
 }
 
-const startedAt = new Date
+const startedAt = new Date().getTime()
 
 const softCutoff = (60 + (Math.random() * 15)) * 1000
 const hardCutoff = (90 + (Math.random() * 15)) * 1000
@@ -125,7 +118,7 @@ async function run() {
   if (transactionHashRequests.length === 0) {
     console.log('no transaction hash')
 
-    const now = new Date
+    const now = new Date().getTime()
     const ellapsed = now - startedAt
     if (ellapsed > 10000) {
       console.log('exit')
@@ -140,7 +133,7 @@ async function run() {
   console.log('transactionHashRequests.age', (new Date).getTime() - transactionHashRequest.requestedAt)
   await handleTransactionHash(transactionHashRequest.transactionHash)
 
-  const now = new Date
+  const now = new Date().getTime()
   const ellapsed = now - startedAt
   console.log('ellapsed', ellapsed)
   if (ellapsed > softCutoff) {

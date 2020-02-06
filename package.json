@@ -2,9 +2,10 @@
   "name": "pollenium-echium",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "node/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc"
   },
   "repository": {
     "type": "git",
@@ -17,13 +18,15 @@
   },
   "homepage": "https://github.com/pollenium/echium#readme",
   "dependencies": {
-    "bn.js": "^5.0.0",
     "delay": "^4.3.0",
     "forever": "^1.0.0",
     "isomorphic-ws": "^4.0.1",
-    "pollenium-anemone": "^3.0.0",
-    "tiny-worker": "^2.3.0",
-    "web3": "^1.2.2",
-    "wrtc": "^0.4.2"
+    "pollenium-anemone": "^7.0.1",
+    "pollenium-uvaursi": "^8.5.0",
+    "web3": "^1.2.2"
+  },
+  "devDependencies": {
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.7.5"
   }
 }
